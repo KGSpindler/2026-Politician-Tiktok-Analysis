@@ -3,6 +3,9 @@
 The Danish Folketing election has invigorated politicians to use all means to increase their voters. 
 Recently numerous news-channels have reported on politicans usage of Tiktok, especially how Liberal Alliance has used the platform to succesfully increase political reach of the younger generation.
 [(1) TV2](https://nyheder.tv2.dk/politik/2026-03-10-tiktok-er-valgets-store-slagmark-men-ikke-alle-partier-lykkes-lige-godt) [(2) DR](https://www.dr.dk/nyheder/politik/har-du-ikke-tiktok-saadan-har-politikerne-foert-valgkamp-derinde)
+
+In 2023 
+
 <br><br>
 A few questions arose:
 <ul>
@@ -22,4 +25,19 @@ To answer these questions and more, I set out to explore the Danish Political La
 3. Manually review the list, to ensure only actual accounts are included, as well as adding candidate profile that weren't included.
 4. Run a python script to collect profile data (total likes, followers) as well as data for all videos posted in the last 6 months.
 5. Analyse the data
+
+### Results
+
+#### Data
+I found 224 profiles in total, with 192 candidate profiles and 32 party profiles (main, local, youth, fan).
+I found 4976 videos in total, where candidates accounted for 4192 (84,2%) videos and parties accountes for 784 (15,8%) videos. There are of course accounts I haven't been able to find, but this mainly decreases the validity of the profile-amount-by-parties, and not the general results of the parties, as I have included all the main profiles with the biggest impact.
+<br><br>
+There are a few problems with some of the profiles.
+A few Politicians only have unofficial profiles - I have used these when it is obvious they are run by a social media manager. For Example @mette_insider_offical for Mette Frederiksen or @radikaleeeforrohden for Thomas Rohden. 
+<br>There are also some profiles, who haven't posted at all (28 profiles - 12,5% of total profiles found).
+
+
+#### Methodology
+
+
 
