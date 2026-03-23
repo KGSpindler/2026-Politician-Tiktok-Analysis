@@ -1,4 +1,5 @@
 ### Analysis of the Danish Folketing Election Candidates tiktok usage over the last 6 months
+#### Check out the interactive dashboards [here](https://kgspindler.github.io/kasperspindlerdashboards/)
 
 The Danish Folketing election has invigorated politicians to use all means to increase their voters. 
 Recently numerous news-channels have reported on politicans usage of Tiktok, especially how Liberal Alliance has used the platform to succesfully increase political reach of the younger generation.
@@ -25,17 +26,18 @@ To answer these questions and more, I set out to explore the Danish Political La
 5. Analyse the data
 
 ### Results
+...
 
 #### Data
-I found 224 profiles in total, with 192 candidate profiles and 32 party profiles (main, local, youth, fan).
-I found 4976 videos in total, where candidates accounted for 4192 (84,2%) videos and parties accountes for 784 (15,8%) videos. There are of course accounts I haven't been able to find, but this mainly decreases the validity of the profile-amount-by-parties, and not the general results of the parties, as I have included all the main profiles with the biggest impact.
+I found 223 profiles in total, with 192 candidate profiles and 31 party profiles (main, local, youth, fan-ish).
+I found 4943 videos in total, where candidates accounted for 4192 (84,8%) videos and parties accountes for 751 (15,2%) videos. There are of course accounts I haven't been able to find, but this mainly decreases the validity of the profile-amount-by-parties, and not the general results of the parties, as I have included all the main profiles with the biggest impact.
 <br><br>
 There are a few problems with some of the profiles.
 A few Politicians only have unofficial profiles - I have used these when it is obvious they are run by a social media manager. For Example @mette_insider_offical for Mette Frederiksen or @radikaleeeforrohden for Thomas Rohden. 
-<br>There are also some profiles, who haven't posted at all (28 profiles - 12,5% of total profiles found).
+<br>There are also some profiles, who haven't posted at all (28 profiles - 12,56% of total profiles found).
 
-
-#### Methodology
+#### Use of AI
+All main scripts have been written by ChatGPT and/or Claude to save time - and precision in webscraping for tiktok accounts, as well as collecting video metadata. All accounts have been manually reviewed and easy-to-find accounts that weren't found by the script, were added manually. 
 
 
 
