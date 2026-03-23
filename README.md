@@ -4,8 +4,6 @@ The Danish Folketing election has invigorated politicians to use all means to in
 Recently numerous news-channels have reported on politicans usage of Tiktok, especially how Liberal Alliance has used the platform to succesfully increase political reach of the younger generation.
 [(1) TV2](https://nyheder.tv2.dk/politik/2026-03-10-tiktok-er-valgets-store-slagmark-men-ikke-alle-partier-lykkes-lige-godt) [(2) DR](https://www.dr.dk/nyheder/politik/har-du-ikke-tiktok-saadan-har-politikerne-foert-valgkamp-derinde)
 
-In 2023 
-
 <br><br>
 A few questions arose:
 <ul>
