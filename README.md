@@ -1,5 +1,5 @@
 ### Analysis of the Danish Folketing Election Candidates tiktok usage over the last 6 months
-#### Check out the interactive dashboards [here](https://kgspindler.github.io/kasperspindlerdashboards/)
+#### Check out the interactive dashboards [here](https://kgspindler.github.io/kasperspindler/)
 
 The Danish Folketing election has invigorated politicians to use all means to increase their voters. 
 Recently numerous news-channels have reported on politicans usage of Tiktok, especially how Liberal Alliance has used the platform to succesfully increase political reach of the younger generation.
