@@ -52,6 +52,8 @@ The election announcement marks a clear turning point in Danish political partie
 Overall the findings suggest that Tiktok is becoming an increasingly important, and prioritized tool in the Danish Politicians' campaign toolbox.
 
 ### Data
+Find the video or candidate datasets [here](https://github.com/KGSpindler/2026-Politician-Tiktok-Analysis/tree/main/TiktokData/TiktokAccountData/tiktok_data)
+
 I found 224 profiles in total, with 192 candidate profiles and 32 party profiles (main, local, youth, fan-ish). Of these, only 195 had uploaded videos. I found 4943 videos in total, where candidates accounted for 4192 (84,8%) videos and parties accountes for 751 (15,2%) videos. There are of course accounts I haven't been able to find, but this mainly decreases the validity of the profile-amount-by-parties, and not the general results of the parties, as I have included all the main profiles with the biggest impact.
 <br><br>
 There are a few problems with some of the profiles.
