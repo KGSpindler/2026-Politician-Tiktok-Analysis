@@ -1,0 +1,176 @@
+﻿candidate_name,party_name,storkreds,list_type,is_alphabetical,list_position,raw_position,opstillet_i_kreds,prioriteret_i_kreds,personal_votes,total_votes,valgt_token,elected_marker,valgt_nr,stedfortraeder_nr,is_elected,beat_someone_above,n_above,n_above_beaten
+Sophie Hæstorp Andersen,Socialdemokratiet,Københavns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,7,2187,2187,3K,K,3,,True,1,1,1
+Ida Auken,Socialdemokratiet,Københavns Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,"10,11",11286,11286,2K,K,2,,True,1,2,2
+Peter Hummelgaard,Socialdemokratiet,Københavns Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,12,11637,11637,1K,K,1,,True,1,6,6
+Sofie de Bretteville,Socialdemokratiet,Københavns Omegns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,8,4431,4431,3K,K,3,,True,1,1,1
+Morten Bødskov,Socialdemokratiet,Københavns Omegns Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,4,5643,5643,2K,K,2,,True,1,2,2
+Mattias Tesfaye,Socialdemokratiet,Københavns Omegns Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,6,11898,11898,1K,K,1,,True,1,4,4
+Fie Hækkerup,Socialdemokratiet,Nordsjællands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,3,5763,5763,1K,K,1,,True,0,0,0
+Matilde Powers,Socialdemokratiet,Nordsjællands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,5,4030,4030,3K,K,3,,True,1,3,2
+Rasmus Stoklund,Socialdemokratiet,Nordsjællands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,4,4528,4528,2K,K,2,,True,1,5,4
+Lea Wermelin,Socialdemokratiet,Bornholms Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,Alle,3837,3837,1K,K,1,,True,1,2,2
+Trine Birk Andersen,Socialdemokratiet,Sjællands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,9,4106,4106,5K,K,5,,True,1,1,1
+Kaare Dybvad Bek,Socialdemokratiet,Sjællands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,8,5848,5848,3K,K,3,,True,1,2,2
+Magnus Heunicke,Socialdemokratiet,Sjællands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,4,14316,14316,1K,K,1,,True,1,4,4
+Kasper Roug,Socialdemokratiet,Sjællands Storkreds,prioriteret_sideordnet,False,10,Alle,Alle,1,4476,4476,4K,K,4,,True,1,9,7
+Frederik Vad,Socialdemokratiet,Sjællands Storkreds,prioriteret_sideordnet,False,12,Alle,Alle,12,6763,6763,2K,K,2,,True,1,11,10
+Trine Bramsen,Socialdemokratiet,Fyns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,2,8112,8112,2K,K,2,,True,0,0,0
+Bjørn Brandenborg,Socialdemokratiet,Fyns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,7,12098,12098,1K,K,1,,True,1,1,1
+Jeppe Bruus,Socialdemokratiet,Fyns Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,5,5501,5501,3K,K,3,,True,0,2,0
+Thomas Skriver Jensen,Socialdemokratiet,Fyns Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,3,4231,4231,4K,K,4,,True,1,5,2
+Benny Engelbrecht,Socialdemokratiet,Sydjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,1,7275,7275,2K,K,2,,True,1,1,1
+Anders Kronborg,Socialdemokratiet,Sydjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,"4,5",5728,5728,5K,K,5,,True,1,4,3
+Christian Rabjerg Madsen,Socialdemokratiet,Sydjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,"11,12",7844,7844,1K,K,1,,True,1,6,6
+Jesper Petersen,Socialdemokratiet,Sydjyllands Storkreds,prioriteret_sideordnet,False,10,Alle,Alle,13,6188,6188,4K,K,4,,True,1,9,7
+Birgitte Vind,Socialdemokratiet,Sydjyllands Storkreds,prioriteret_sideordnet,False,13,Alle,Alle,"8,9",6220,6220,3K,K,3,,True,1,12,10
+Camilla Fabricius,Socialdemokratiet,Østjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,2,5876,5876,3K,K,3,,True,0,0,0
+Leif Lahn Jensen,Socialdemokratiet,Østjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,5,6837,6837,2K,K,2,,True,1,3,3
+Anders Kühnau,Socialdemokratiet,Østjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,4,4043,4043,1T,T,1,,True,1,4,2
+Malte Larsen,Socialdemokratiet,Østjyllands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,6,4365,4365,5K,K,5,,True,1,5,3
+Thomas Monberg,Socialdemokratiet,Østjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,10,4652,4652,4K,K,4,,True,1,6,4
+Nicolai Wammen,Socialdemokratiet,Østjyllands Storkreds,prioriteret_sideordnet,False,11,Alle,Alle,"1,3",19203,19203,1K,K,1,,True,1,10,10
+Katrine Evelyn Jensen,Socialdemokratiet,Vestjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,"3,4",4721,4721,3K,K,3,,True,1,3,3
+Mogens Jensen,Socialdemokratiet,Vestjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,"8,9",7010,7010,1K,K,1,,True,1,4,4
+Anne Paulin,Socialdemokratiet,Vestjyllands Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,2,6742,6742,2K,K,2,,True,1,8,7
+Mette Frederiksen,Socialdemokratiet,Nordjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,7,41721,41721,1K,K,1,,True,1,1,1
+Ane Halsboe-Jørgensen,Socialdemokratiet,Nordjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,3,6864,6864,3K,K,3,,True,1,2,1
+Thomas Klimek,Socialdemokratiet,Nordjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,2,4116,4116,5K,K,5,,True,1,4,2
+Simon Kollerup,Socialdemokratiet,Nordjyllands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,4,9050,9050,2K,K,2,,True,1,5,4
+Flemming Møller Mortensen,Socialdemokratiet,Nordjyllands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,5,5824,5824,4K,K,4,,True,1,7,4
+Magnus Georg Jensen,Radikale Venstre,Københavns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,6,4491,4491,2K,K,2,,True,1,1,1
+Samira Nawa,Radikale Venstre,Københavns Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,5,10372,10372,1K,K,1,,True,1,6,6
+Thomas Rohden,Radikale Venstre,Københavns Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,10,4136,4136,1T,T,1,,True,1,8,6
+Stinus Lindgreen,Radikale Venstre,Københavns Omegns Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,2,2837,2837,1K,K,1,,True,1,8,8
+Martin Lidegaard,Radikale Venstre,Nordsjællands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,6,9328,9328,1K,K,1,,True,1,3,3
+Zenia Stampe,Radikale Venstre,Sjællands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,"7,8",4242,4242,1T,T,1,,True,1,7,7
+Anastasia Milthers,Radikale Venstre,Fyns Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,"1,5",2393,2393,1T,T,1,,True,1,3,3
+Katrine Robsøe,Radikale Venstre,Østjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,4,6406,6406,1K,K,1,,True,1,6,6
+Philip Vivet,Radikale Venstre,Vestjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,"8,11",1443,1443,1T,T,1,,True,1,6,6
+Steffen Holme Helledie,Radikale Venstre,Nordjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,9,1124,1124,1T,T,1,,True,1,2,2
+Helle Bonnesen,Det Konservative Folkeparti,Københavns Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,1,2852,2852,2K,K,2,,True,1,3,3
+Anders Storgaard,Det Konservative Folkeparti,Københavns Storkreds,prioriteret_sideordnet,False,11,Alle,Alle,10,3099,3099,1K,K,1,,True,1,10,10
+Christian Vigilius,Det Konservative Folkeparti,Københavns Omegns Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,1,4295,4295,1K,K,1,,True,1,6,6
+Mette Abildgaard,Det Konservative Folkeparti,Nordsjællands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,6,10807,10807,1K,K,1,,True,0,0,0
+Birgitte Bergman,Det Konservative Folkeparti,Nordsjællands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,1,3176,3176,1T,T,1,,True,0,1,0
+Marcus Knuth,Det Konservative Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,2,4394,4394,1K,K,1,,True,1,6,6
+Rune Kristensen,Det Konservative Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,11,1880,1880,1T,T,1,,True,1,7,6
+Mai Mercado,Det Konservative Folkeparti,Fyns Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,3,6146,6146,1K,K,1,,True,1,6,6
+Frederik Bloch Münster,Det Konservative Folkeparti,Sydjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,4,2081,2081,1K,K,1,,True,1,6,6
+Charlotte Green,Det Konservative Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,8,1425,1425,2K,K,2,,True,0,0,0
+Mona Juul,Det Konservative Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,4,21594,21594,1K,K,1,,True,1,3,3
+Lise Bertelsen,Det Konservative Folkeparti,Vestjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,4,6290,6290,1K,K,1,,True,1,1,1
+Sofie Therese Svendsen,Det Konservative Folkeparti,Nordjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,9,2488,2488,1K,K,1,,True,1,6,6
+Lisbeth Bech-Nielsen,SF - Socialistisk Folkeparti,Københavns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,Alle,5494,5494,1K,K,1,,True,1,1,1
+Nanna Bonde,SF - Socialistisk Folkeparti,Københavns Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,,4166,4166,2K,K,2,,True,1,3,2
+Carl Valentin,SF - Socialistisk Folkeparti,Københavns Storkreds,prioriteret_sideordnet,False,10,Alle,Alle,,3271,3271,3K,K,3,,True,1,9,7
+Sigurd Agersnap,SF - Socialistisk Folkeparti,Københavns Omegns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,3,3546,3546,1K,K,1,,True,0,0,0
+Sofie F. Villadsen,SF - Socialistisk Folkeparti,Københavns Omegns Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,5,3349,3349,2K,K,2,,True,1,7,6
+Marianne Bigum,SF - Socialistisk Folkeparti,Nordsjællands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,,2384,2384,1T,T,1,,True,0,0,0
+Jacob Mark,SF - Socialistisk Folkeparti,Nordsjællands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,Alle,12139,12139,1K,K,1,,True,1,2,2
+Anne Valentina Berthelsen,SF - Socialistisk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,,1782,1782,3K,K,3,,True,1,1,1
+Astrid Carøe,SF - Socialistisk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,,1895,1895,2K,K,2,,True,1,2,2
+Pia Olsen Dyhr,SF - Socialistisk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,Alle,29344,29344,1K,K,1,,True,1,3,3
+Karsten Hønge,SF - Socialistisk Folkeparti,Fyns Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,,5373,5373,1K,K,1,,True,1,4,4
+Lise Müller,SF - Socialistisk Folkeparti,Fyns Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,Alle,4732,4732,2K,K,2,,True,1,5,4
+Karina Lorentzen Dehnhardt,SF - Socialistisk Folkeparti,Sydjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,"1,2,8,9,10,11,12,13",8246,8246,1K,K,1,,True,1,2,2
+Jørgen Kvist,SF - Socialistisk Folkeparti,Sydjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,"3,4,5,6,7",1197,1197,2K,K,2,,True,1,6,5
+Kirsten Normann Andersen,SF - Socialistisk Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,Alle,9526,9526,1K,K,1,,True,1,1,1
+Sofie Lippert,SF - Socialistisk Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,,4516,4516,2K,K,2,,True,1,4,3
+Charlotte Broman Mølbæk,SF - Socialistisk Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,,4356,4356,3K,K,3,,True,1,6,4
+Signe Munk,SF - Socialistisk Folkeparti,Vestjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,Alle,13806,13806,1K,K,1,,True,1,4,4
+Theresa Berg Andersen,SF - Socialistisk Folkeparti,Nordjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,5,4623,4623,1K,K,1,,True,1,1,1
+Christina Lykke,SF - Socialistisk Folkeparti,Nordjyllands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,1,3260,3260,1T,T,1,,True,1,7,6
+Emilie Schytte,Borgernes Parti - Lars Boje Mathiesen,Nordsjællands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,3,533,533,1T,T,1,,True,1,2,2
+Jacob Harris,Borgernes Parti - Lars Boje Mathiesen,Sjællands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"3,4,7,8,9,10,11,12",2307,2307,1T,T,1,,True,1,1,1
+Nadja Natalie Isaksen,Borgernes Parti - Lars Boje Mathiesen,Sydjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,"1,13",1301,1301,1T,T,1,,True,1,3,3
+Lars Boje Mathiesen,Borgernes Parti - Lars Boje Mathiesen,Østjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,Alle,8408,8408,1T,T,1,,True,1,1,1
+Ole Birk Olesen,Liberal Alliance,Københavns Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,"1,3,5,6,7,8,10,11",2886,2886,1T,T,1,,True,1,4,4
+Mads Strange,Liberal Alliance,Københavns Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,"2,4,9,12",4488,4488,1K,K,1,,True,1,8,8
+Freja Brandhøj,Liberal Alliance,Københavns Omegns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"1,2,3",1566,1566,1K,K,1,,True,1,1,1
+Steffen W. Frølund,Liberal Alliance,Nordsjællands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,"2,5,6",1868,1868,1K,K,1,,True,1,3,3
+Lars-Christian Brask,Liberal Alliance,Sjællands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"6,7,8",1691,1691,2K,K,2,,True,0,0,0
+Joachim Riis,Liberal Alliance,Sjællands Storkreds,prioriteret_sideordnet,False,16,Alle,Alle,"1,2,3,4,5",965,965,1T,T,1,,True,1,15,14
+Pernille Vermund,Liberal Alliance,Sjællands Storkreds,prioriteret_sideordnet,False,20,Alle,Alle,"9,10,11,12",5751,5751,1K,K,1,,True,1,19,19
+Katrine Daugaard,Liberal Alliance,Fyns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"1,2,3",2375,2375,1K,K,1,,True,0,0,0
+Helena Artmann Andresen,Liberal Alliance,Sydjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"1,2,3,13",2387,2387,2K,K,2,,True,1,1,1
+Cecilie Liv Hansen,Liberal Alliance,Sydjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,,2569,2569,1K,K,1,,True,1,2,2
+Jens Meilvang,Liberal Alliance,Østjyllands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,"5,6,7,8",2385,2385,2K,K,2,,True,1,5,5
+Alex Vanopslagh,Liberal Alliance,Østjyllands Storkreds,prioriteret_sideordnet,False,10,Alle,Alle,"1,2,3,4",38487,38487,1K,K,1,,True,1,9,9
+Carsten Bach,Liberal Alliance,Vestjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"5,6,7,8,9",2315,2315,1K,K,1,,True,0,0,0
+Thorbjørn Jacobsen,Liberal Alliance,Vestjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,"1,10,11",1836,1836,1T,T,1,,True,1,2,1
+Sólbjørg Jakobsen,Liberal Alliance,Nordjyllands Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,"7,8,9",7618,7618,1K,K,1,,True,1,8,8
+Peter Larsen,Liberal Alliance,Nordjyllands Storkreds,prioriteret_sideordnet,False,11,Alle,Alle,,1493,1493,1T,T,1,,True,1,10,9
+Ellen Emilie,Moderaterne,Københavns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,,1175,1175,1T,T,1,,True,0,0,0
+Jakob Engel-Schmidt,Moderaterne,Københavns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"1,2,3,4,7,8,10,11,12",8132,8132,1K,K,1,,True,1,1,1
+Monika Rubin,Moderaterne,Københavns Omegns Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,"1,2,3,4,5",4633,4633,1K,K,1,,True,1,6,6
+Pernille Christensen,Moderaterne,Nordsjællands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,,885,885,1T,T,1,,True,0,0,0
+Rasmus Lund-Nielsen,Moderaterne,Nordsjællands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,Alle,3574,3574,1K,K,1,,True,1,3,3
+Charlotte Bagge,Moderaterne,Sjællands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"1,2,3",1909,1909,2K,K,2,,True,0,0,0
+Lars Løkke Rasmussen,Moderaterne,Sjællands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,"4,5,6,7,8,9,10,11,12",34636,34636,1K,K,1,,True,1,7,7
+Lars Aagaard,Moderaterne,Fyns Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,"1,2,5,6",5685,5685,1K,K,1,,True,1,3,3
+Frida Bruun,Moderaterne,Sydjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"6,7",3193,3193,1T,T,1,,True,1,1,1
+Henrik Frandsen,Moderaterne,Sydjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,"1,2,3,4,5,8,9,10,11,12,13",4471,4471,1K,K,1,,True,1,2,2
+Christina Egelund,Moderaterne,Østjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"2,3,5,6,7,8,11",3549,3549,1T,T,1,,True,0,0,0
+Caroline Stage,Moderaterne,Østjyllands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,"1,4,9,10",3751,3751,1K,K,1,,True,1,5,5
+Morten E.G. Brautsch,Moderaterne,Vestjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,Alle,1585,1585,1K,K,1,,True,1,1,1
+Mohammad Rona,Moderaterne,Nordjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,Alle,1604,1604,1K,K,1,,True,1,4,4
+Allan Feldt,Dansk Folkeparti,Københavns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"3,5,9,10,11",1679,1679,1K,K,1,,True,0,0,0
+Mikkel Bjørn,Dansk Folkeparti,Københavns Omegns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,Alle,5746,5746,1K,K,1,,True,0,0,0
+Mikkel Dencker,Dansk Folkeparti,Københavns Omegns Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,,750,750,1T,T,1,,True,1,2,1
+Mette Thiesen,Dansk Folkeparti,Nordsjællands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,Alle,4555,4555,1K,K,1,,True,1,6,6
+Jan Herskov,Dansk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,,460,460,1T,T,1,,True,1,6,6
+Julie Jacobsen,Dansk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,,768,768,3K,K,3,,True,1,7,7
+Malte Larsen,Dansk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,,1036,1036,2K,K,2,,True,1,8,8
+Morten Messerschmidt,Dansk Folkeparti,Sjællands Storkreds,prioriteret_sideordnet,False,10,Alle,Alle,Alle,50819,50819,1K,K,1,,True,1,9,9
+Alex Ahrendtsen,Dansk Folkeparti,Fyns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,Alle,3281,3281,1K,K,1,,True,0,0,0
+Rune Bønnelykke,Dansk Folkeparti,Sydjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,,814,814,2K,K,2,,True,0,0,0
+Josephine Alstrup Kofod,Dansk Folkeparti,Sydjyllands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,,734,734,1T,T,1,,True,1,7,6
+Peter Kofod,Dansk Folkeparti,Sydjyllands Storkreds,prioriteret_sideordnet,False,9,Alle,Alle,Alle,15993,15993,1K,K,1,,True,1,8,8
+Michael Nedersøe,Dansk Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,,2075,2075,1T,T,1,,True,1,3,3
+Nick Zimmermann,Dansk Folkeparti,Østjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,Alle,6007,6007,1K,K,1,,True,1,4,4
+Søren Boel Olesen,Dansk Folkeparti,Vestjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,Alle,2446,2446,1K,K,1,,True,1,2,2
+Anders Vistisen,Dansk Folkeparti,Nordjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,Alle,3580,3580,1K,K,1,,True,1,4,4
+Marie Brixtofte,"Venstre, Danmarks Liberale Parti",Københavns Omegns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,1,2827,6514,1T,T,1,,True,1,1,1
+Sophie Løhde,"Venstre, Danmarks Liberale Parti",Nordsjællands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,5,6784,12514,1K,K,1,,True,1,3,3
+Peter Juel-Jensen,"Venstre, Danmarks Liberale Parti",Bornholms Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,Alle,3017,3494,1K,K,1,,True,1,1,1
+Morten Dahlin,"Venstre, Danmarks Liberale Parti",Sjællands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,6,7021,12552,1K,K,1,,True,1,2,2
+Jacob Jensen,"Venstre, Danmarks Liberale Parti",Sjællands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,10,4265,7629,2K,K,2,,True,1,6,5
+Marlene Ambo-Rasmussen,"Venstre, Danmarks Liberale Parti",Fyns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,6,4791,9201,1K,K,1,,True,0,0,0
+Amanda Heitmann,"Venstre, Danmarks Liberale Parti",Fyns Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,7,3202,5813,1T,T,1,,True,0,1,0
+Stephanie Lose,"Venstre, Danmarks Liberale Parti",Sydjyllands Storkreds,prioriteret_sideordnet,False,8,Alle,Alle,4,31008,41544,1K,K,1,,True,1,7,7
+Anni Matthiesen,"Venstre, Danmarks Liberale Parti",Sydjyllands Storkreds,prioriteret_sideordnet,False,10,Alle,Alle,7,6339,7978,2K,K,2,,True,1,9,8
+Christoffer Aagaard Melson,"Venstre, Danmarks Liberale Parti",Sydjyllands Storkreds,prioriteret_sideordnet,False,11,Alle,Alle,8,4074,6028,3K,K,3,,True,1,10,8
+Mathilde Hjort Bressum,"Venstre, Danmarks Liberale Parti",Østjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,,2317,3707,1T,T,1,,True,1,2,2
+Louise Louring,"Venstre, Danmarks Liberale Parti",Østjyllands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,,3355,5111,2K,K,2,,True,1,5,5
+Troels Lund Poulsen,"Venstre, Danmarks Liberale Parti",Østjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,Alle,19857,29320,1K,K,1,,True,1,6,6
+Thomas Danielsen,"Venstre, Danmarks Liberale Parti",Vestjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,10,5966,7608,2K,K,2,,True,1,1,1
+Søren Gade,"Venstre, Danmarks Liberale Parti",Vestjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,11,15775,21608,1K,K,1,,True,1,3,3
+Trine Jepsen,"Venstre, Danmarks Liberale Parti",Vestjyllands Storkreds,prioriteret_sideordnet,False,7,Alle,Alle,9,4921,6892,3K,K,3,,True,1,6,3
+Marie Bjerre,"Venstre, Danmarks Liberale Parti",Nordjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,5,15319,19961,1K,K,1,,True,1,2,2
+Preben Bang Henriksen,"Venstre, Danmarks Liberale Parti",Nordjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,9,11947,15980,2K,K,2,,True,1,4,3
+Marlene Harpsøe,Danmarksdemokraterne - Inger Støjberg,Nordsjællands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"1,3",575,575,1T,T,1,,True,1,1,1
+Susie Jessen,Danmarksdemokraterne - Inger Støjberg,Sjællands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,"4,9",1946,1946,1K,K,1,,True,1,2,2
+Jens Henrik W. Thulesen Dahl,Danmarksdemokraterne - Inger Støjberg,Fyns Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"2,3,4",1447,1447,1T,T,1,,True,0,0,0
+Karina Adsbøl,Danmarksdemokraterne - Inger Støjberg,Sydjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,"5,12",2370,2370,1K,K,1,,True,0,0,0
+Ulrik Knudsen,Danmarksdemokraterne - Inger Støjberg,Sydjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,"6,7,13",2023,2023,1T,T,1,,True,1,4,3
+Hans Kristian Skibby,Danmarksdemokraterne - Inger Støjberg,Østjyllands Storkreds,prioriteret_sideordnet,False,5,Alle,Alle,"4,10",1818,1818,1K,K,1,,True,1,4,4
+Dennis Flydtkjær,Danmarksdemokraterne - Inger Støjberg,Vestjyllands Storkreds,prioriteret_sideordnet,False,2,Alle,Alle,"6,8,10",4360,4360,2K,K,2,,True,1,1,1
+Mads Fuglede,Danmarksdemokraterne - Inger Støjberg,Vestjyllands Storkreds,prioriteret_sideordnet,False,3,Alle,Alle,"4,11",5806,5806,1K,K,1,,True,1,2,2
+Kim Edberg Andersen,Danmarksdemokraterne - Inger Støjberg,Nordjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,2,1791,1791,2K,K,2,,True,0,0,0
+Inger Støjberg,Danmarksdemokraterne - Inger Støjberg,Nordjyllands Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,"6,7,8,9",29995,29995,1K,K,1,,True,1,5,5
+Pelle Dragsted,Enhedslisten - De Rød-Grønne,Københavns Storkreds,partiliste,False,1,10,10,,30707,31961,1K,K,1,,True,0,0,0
+Rosa Lund,Enhedslisten - De Rød-Grønne,Københavns Storkreds,partiliste,False,2,5,5,,8621,13110,2K,K,2,,True,0,1,0
+Leila Stockmarr,Enhedslisten - De Rød-Grønne,Københavns Storkreds,partiliste,False,3,9,9,,1969,4897,3K,K,3,,True,0,2,0
+Ibrahim Benli,Enhedslisten - De Rød-Grønne,Københavns Omegns Storkreds,partiliste,False,1,4,4,,2740,5230,1K,K,1,,True,0,0,0
+Sinem Dybvad Demir,Enhedslisten - De Rød-Grønne,Nordsjællands Storkreds,partiliste,False,1,3,3,,1318,3346,1T,T,1,,True,0,0,0
+Eva Flyvholm,Enhedslisten - De Rød-Grønne,Sjællands Storkreds,partiliste,False,1,"10, 11","10,11",,2822,5514,1K,K,1,,True,0,0,0
+Victoria Velásquez,Enhedslisten - De Rød-Grønne,Fyns Storkreds,partiliste,False,1,1,1,,4973,7756,1K,K,1,,True,0,0,0
+Rasmus Vestergaard Madsen,Enhedslisten - De Rød-Grønne,Sydjyllands Storkreds,partiliste,False,1,"7, 9","7,9",,856,2458,1T,T,1,,True,0,0,0
+Trine Mach,Enhedslisten - De Rød-Grønne,Østjyllands Storkreds,partiliste,False,1,"1, 4","1,4",,3397,10455,1K,K,1,,True,0,0,0
+Lisbeth Torfing,Enhedslisten - De Rød-Grønne,Vestjyllands Storkreds,partiliste,False,1,"3, 6","3,6",,644,2521,1T,T,1,,True,0,0,0
+Peder Hvelplund,Enhedslisten - De Rød-Grønne,Nordjyllands Storkreds,partiliste,False,1,7,7,,2296,4400,1T,T,1,,True,0,0,0
+Franciska Rosenkilde,Alternativet,Københavns Storkreds,prioriteret_sideordnet,False,13,Alle,Alle,Alle,11385,11385,1K,K,1,,True,1,12,12
+Signe Wenneberg,Alternativet,Københavns Omegns Storkreds,prioriteret_sideordnet,False,6,Alle,Alle,Alle,3349,3349,1T,T,1,,True,1,5,5
+Elise Sydendal,Alternativet,Sjællands Storkreds,prioriteret_sideordnet,False,11,Alle,Alle,,1298,1298,1T,T,1,,True,1,10,10
+Torsten Gejl,Alternativet,Østjyllands Storkreds,prioriteret_sideordnet,False,4,Alle,Alle,Alle,3316,3316,1T,T,1,,True,1,3,3
+Anna Bjerre,Alternativet,Nordjyllands Storkreds,prioriteret_sideordnet,False,1,Alle,Alle,Alle,1194,1194,1T,T,1,,True,0,0,0
