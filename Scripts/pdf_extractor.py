@@ -10,7 +10,7 @@ import pdfplumber
 ROOT = Path(__file__).resolve().parents[1]
 RUN_ID = datetime.now().strftime("%Y-%m-%d_%H%M%S")
 PDF_DIR = Path(os.environ.get("PDF_INPUT_DIR", str(ROOT / "Datasets" / "Candidates" / "Candidate PDFs")))
-OUTPUT_CSV = Path(os.environ.get("PDF_OUTPUT_CSV", str(ROOT / "Outputs" / "Candidates" / f"run_{RUN_ID}" / "candidates_list_2026.csv")))
+OUTPUT_CSV = Path(os.environ.get("PDF_OUTPUT_CSV", str(ROOT / "Datasets" / "Candidates" / f"recorded_{datetime.now().strftime('%Y-%m-%d')}" / "candidates_list_2026.csv")))
 
 PARTIES = [
     "Socialdemokratiet",

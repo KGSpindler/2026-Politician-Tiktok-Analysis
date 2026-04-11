@@ -63,7 +63,7 @@ def _env_path(var, default: Path) -> Path:
 
 CANDIDATES_CSV    = _env_path("TIKTOK_CANDIDATES_CSV",  _ROOT / "Inputs" / "TikTok" / "current" / "candidates_tiktok_accounts.csv")
 PARTIES_CSV       = _env_path("TIKTOK_PARTIES_CSV",     _ROOT / "Inputs" / "TikTok" / "current" / "party_tiktok_accounts_from_claude.csv")
-OUTDIR            = _env_path("TIKTOK_OUTDIR",          _ROOT / "Outputs" / "TikTok" / f"run_{_RUN_ID}")
+OUTDIR            = _env_path("TIKTOK_OUTDIR",          _ROOT / "Datasets" / "TikTok" / f"run_{_RUN_ID}")
 CHECKPOINT_FILE   = OUTDIR / "tiktok_collect_checkpoint.json"
 RETRY_LATER_FILE  = OUTDIR / "tiktok_retry_later.json"
 

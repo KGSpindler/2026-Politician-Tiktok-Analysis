@@ -1,0 +1,50 @@
+                                  OLS Regression Results                                 
+=========================================================================================
+Dep. Variable:     vote_share_of_party_muni_2026   R-squared:                       0.364
+Model:                                       OLS   Adj. R-squared:                  0.360
+Method:                            Least Squares   F-statistic:                     5.695
+Date:                           Fri, 10 Apr 2026   Prob (F-statistic):           1.70e-12
+Time:                                   20:29:30   Log-Likelihood:                 1201.8
+No. Observations:                           3205   AIC:                            -2362.
+Df Residuals:                               3184   BIC:                            -2234.
+Df Model:                                     20                                         
+Covariance Type:                         cluster                                         
+==========================================================================================================================
+                                                             coef    std err          z      P>|z|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------
+Intercept                                                  0.0330      0.044      0.749      0.454      -0.053       0.119
+C(education)[T.Bachelor-/diplomuddannelse]                 0.0131      0.042      0.311      0.756      -0.069       0.095
+C(education)[T.Erhvervsuddannelse]                         0.0150      0.046      0.326      0.744      -0.075       0.105
+C(education)[T.Grundskole]                                -0.0127      0.042     -0.303      0.762      -0.095       0.069
+C(education)[T.Gymnasial uddannelse]                       0.0086      0.050      0.172      0.863      -0.089       0.106
+C(education)[T.Ikke oplyst]                               -0.0348      0.043     -0.808      0.419      -0.119       0.050
+C(education)[T.Kandidat-/masteruddannelse]                 0.0203      0.042      0.483      0.629      -0.062       0.103
+C(education)[T.Ph.d.-uddannelse]                          -0.0187      0.063     -0.295      0.768      -0.143       0.106
+C(education)[T.Seminaruddannelse]                          0.0415      0.054      0.774      0.439      -0.063       0.146
+C(party_name)[T.Borgernes Parti - Lars Boje Mathiesen]  1.695e-16   6.35e-17      2.670      0.008    4.51e-17    2.94e-16
+C(party_name)[T.Danmarksdemokraterne - Inger Støjberg] -4.781e-17   1.21e-16     -0.395      0.693   -2.85e-16    1.89e-16
+C(party_name)[T.Dansk Folkeparti]                          0.0210      0.041      0.509      0.610      -0.060       0.102
+C(party_name)[T.Det Konservative Folkeparti]               0.0463      0.029      1.579      0.114      -0.011       0.104
+C(party_name)[T.Enhedslisten - De Rød-Grønne]              0.0464      0.026      1.761      0.078      -0.005       0.098
+C(party_name)[T.Liberal Alliance]                          0.0337      0.027      1.266      0.206      -0.018       0.086
+C(party_name)[T.Moderaterne]                               0.0930      0.068      1.371      0.171      -0.040       0.226
+C(party_name)[T.Radikale Venstre]                          0.0376      0.027      1.385      0.166      -0.016       0.091
+C(party_name)[T.SF - Socialistisk Folkeparti]              0.0357      0.024      1.506      0.132      -0.011       0.082
+C(party_name)[T.Socialdemokratiet]                         0.0534      0.021      2.572      0.010       0.013       0.094
+C(party_name)[T.Uden for partierne]                    -1.985e-16   3.11e-17     -6.393      0.000   -2.59e-16   -1.38e-16
+C(party_name)[T.Venstre]                                   0.0444      0.026      1.698      0.089      -0.007       0.096
+tiktok_exists                                              0.0662      0.027      2.427      0.015       0.013       0.120
+log_videos_last_14d                                       -0.0217      0.012     -1.784      0.074      -0.045       0.002
+prior_vote_share_of_party_2022                             1.7107      0.270      6.334      0.000       1.181       2.240
+age_num                                                         0          0        nan        nan           0           0
+==============================================================================
+Omnibus:                     1151.690   Durbin-Watson:                   1.241
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             3881.578
+Skew:                           1.823   Prob(JB):                         0.00
+Kurtosis:                       6.972   Cond. No.                          inf
+==============================================================================
+
+Notes:
+[1] Standard Errors are robust to cluster correlation (cluster)
+[2] The smallest eigenvalue is      0. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.

@@ -1,0 +1,10 @@
+{
+  "repo_root": "C:\\Users\\kaspe_z3s57nn\\OneDrive\\Dokumenter\\GitHub\\2026-Politician-Tiktok-Analysis",
+  "pre_election_end": "2026-03-23",
+  "municipality_covariate_year": 2025,
+  "n_candidate_municipality_rows": 11148,
+  "n_candidate_rows": 1053,
+  "n_candidates_with_tiktok_exists": 176,
+  "candidate_municipality_output": "C:\\Users\\kaspe_z3s57nn\\OneDrive\\Dokumenter\\GitHub\\2026-Politician-Tiktok-Analysis\\Outputs\\analysis_dataset_2026\\candidate_municipality_analysis_2026.csv",
+  "candidate_output": "C:\\Users\\kaspe_z3s57nn\\OneDrive\\Dokumenter\\GitHub\\2026-Politician-Tiktok-Analysis\\Outputs\\analysis_dataset_2026\\candidate_analysis_2026.csv"
+}

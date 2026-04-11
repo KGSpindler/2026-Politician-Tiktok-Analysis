@@ -1,0 +1,13 @@
+Simple TikTok vote-share model summary
+2026 candidate x municipality rows: 9,873
+Unique 2026 candidates: 925
+Candidates with TikTok account list match: 201
+Matched candidate-level TikTok videos: 4,192
+Mean vote_share_of_party_muni_2026: 0.121442
+Municipality heterogeneity variable used: none detected
+Saved files:
+- analysis_candidate_muni_2026.csv
+- analysis_candidate_level_2026.csv
+- model_1_tiktok_exists.txt
+- model_2_recent_video_windows.txt
+- model_3_with_prior_strength.txt

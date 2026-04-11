@@ -2,103 +2,192 @@
 # -*- coding: utf-8 -*-
 
 """
-valg.dk Folketing scraper
+valg.dk Folketing export scraper
 
-Goal
-----
-Scrape candidate results for every party in every polling area (afstemningsområde /
-opstillingskreds subtree) for a Folketing election page such as:
-
-https://valg.dk/fv/47b883ef-d0d3-4cb6-9da5-91963f0e9ba0
-
-Pipeline
---------
-1. Open election page
-2. Expand the "Gå til opstillingskreds" section
-3. Expand each storkreds button
-4. Collect every nomination-district link
-5. Visit each nomination-district page
-6. Collect every polling-district link
-7. Visit each polling-district page
-8. Expand each party block
-9. Extract party-level and candidate-level rows in displayed order
-10. Save CSV files
+What changed
+------------
+- Uses the "Eksporter data" button on each polling-district page instead of scraping the
+  results table from the DOM.
+- Captures both:
+    * storkreds
+    * opstillingskreds / nomination_label
+    * kommune
+    * polling district / afstemningsområde
+- Keeps the raw exported files, plus a merged CSV with metadata and parsed export rows
+  whenever the downloaded file can be read as CSV or Excel.
 
 Requirements
 ------------
-pip install playwright pandas beautifulsoup4 lxml
+pip install playwright pandas beautifulsoup4 lxml openpyxl
 python -m playwright install chromium
 
 Run
 ---
-python valgdk_folketing_scraper.py
+python valgdk_export_scraper.py
+python valgdk_export_scraper.py --start-url "https://valg.dk/fv/47b883ef-d0d3-4cb6-9da5-91963f0e9ba0"
 
-Optional custom URL:
-python valgdk_folketing_scraper.py "https://valg.dk/fv/47b883ef-d0d3-4cb6-9da5-91963f0e9ba0"
+Outputs
+-------
+- nomination_district_links.csv
+- polling_district_links.csv
+- export_inventory.csv
+- parsed_export_rows.csv
+- exports/<raw downloaded files>
+- parsed_tables/<one CSV per parsed export sheet or CSV file>
 
 Notes
 -----
-- This is built to follow the actual UI structure you described:
-  * storkreds buttons like: <button ...> Bornholm </button>
-  * nomination links like: <a href="/fv/.../nomination-district/...">1. Rønne</a>
-- The polling-district pages are JavaScript pages, so Playwright is used.
-- The exact CSS classes for the result cards can change. The script therefore combines:
-  1) explicit link/expand logic, and
-  2) robust HTML-table / DOM-order fallback parsing.
+- The scraper still opens each polling-district page, but it no longer scrapes the result
+  tables from the HTML. It clicks the export button and parses the downloaded file instead.
+- If a downloaded file cannot be parsed automatically, it is still saved in exports/.
 """
 
+from __future__ import annotations
+
+import argparse
 import csv
+import io
 import os
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, Iterable, List, Optional, Tuple
 from urllib.parse import urljoin, urlparse
 
+import pandas as pd
 from bs4 import BeautifulSoup
+
 try:
     from playwright.sync_api import Error as PlaywrightError  # type: ignore[import-not-found]
     from playwright.sync_api import TimeoutError as PlaywrightTimeoutError  # type: ignore[import-not-found]
-    from playwright.sync_api import sync_playwright  # type: ignore[import-not-found]
+    from playwright.sync_api import Download, Locator, Page, sync_playwright  # type: ignore[import-not-found]
     _PLAYWRIGHT_IMPORT_ERROR = None
 except ImportError as exc:
     PlaywrightError = Exception
     PlaywrightTimeoutError = TimeoutError
     sync_playwright = None
+    Download = object  # type: ignore
+    Locator = object  # type: ignore
+    Page = object  # type: ignore
     _PLAYWRIGHT_IMPORT_ERROR = exc
 
 
-START_URL = "https://valg.dk/fv/847cec19-05ff-4eff-b433-f0e886b24b7d"
+START_URL = "https://valg.dk/fv/47b883ef-d0d3-4cb6-9da5-91963f0e9ba0"
+DEFAULT_ELECTIONS: List[Tuple[int, str]] = [
+    (2005, "https://valg.dk/fv/a0fdd185-c290-43c0-a323-6f93743cc074"),
+    (2007, "https://valg.dk/fv/103a7710-f6e1-4330-a4dc-267dffc8643c"),
+    (2011, "https://valg.dk/fv/da30d080-70f3-4c6e-9933-caa61fad85b4"),
+    (2015, "https://valg.dk/fv/8b9462dd-2bb6-40f7-b160-2a625665124b"),
+    (2019, "https://valg.dk/fv/847cec19-05ff-4eff-b433-f0e886b24b7d"),
+    (2022, "https://valg.dk/fv/987875fe-0dae-42ac-be5b-62cf0bd5d65e"),
+    (2026, "https://valg.dk/fv/47b883ef-d0d3-4cb6-9da5-91963f0e9ba0"),
+]
+DEFAULT_ELECTION_URLS = [url for _, url in DEFAULT_ELECTIONS]
+URL_TO_YEAR = {url: year for year, url in DEFAULT_ELECTIONS}
 HEADLESS = True
-ROOT = Path(__file__).resolve().parents[1]
-RUN_ID = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-OUTDIR = Path(os.environ.get("VALGDK_OUTDIR", str(ROOT / "Outputs" / "Valgdk" / f"run_{RUN_ID}")))
-
-NOMINATION_LINKS_CSV = "nomination_district_links.csv"
-POLLING_LINKS_CSV = "polling_district_links.csv"
-PARTY_RESULTS_CSV = "polling_district_party_results.csv"
-CANDIDATE_RESULTS_CSV = "polling_district_candidate_results.csv"
 NAVIGATION_ATTEMPTS = 3
 NAVIGATION_TIMEOUT_MS = 120000
 NAVIGATION_RETRY_SLEEP_MS = 2500
+DOWNLOAD_TIMEOUT_MS = 20000
+
+RUN_ID = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+ROOT = Path(__file__).resolve().parents[1]
+OUTDIR = Path(os.environ.get("VALGDK_OUTDIR", str(ROOT / "Datasets" / "Election")))
+
+NOMINATION_LINKS_CSV = "nomination_district_links.csv"
+POLLING_LINKS_CSV = "polling_district_links.csv"
+EXPORT_INVENTORY_CSV = "export_inventory.csv"
+PARSED_EXPORT_ROWS_CSV = "parsed_export_rows.csv"
+RUN_SUMMARY_CSV = "run_summary.csv"
 
 
-def clean_text(value: str) -> str:
-    value = value.replace("\xa0", " ")
-    value = re.sub(r"\s+", " ", value).strip()
-    return value
+def clean_text(value: object) -> str:
+    text = "" if value is None else str(value)
+    text = text.replace("\xa0", " ")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
-def safe_slug(value: str) -> str:
-    value = clean_text(value)
-    value = re.sub(r"[^\w\-]+", "_", value, flags=re.UNICODE)
-    value = re.sub(r"_+", "_", value).strip("_")
-    return value or "page"
+def safe_slug(value: object) -> str:
+    text = clean_text(value)
+    text = re.sub(r"[^\w\-]+", "_", text, flags=re.UNICODE)
+    text = re.sub(r"_+", "_", text).strip("_")
+    return text or "value"
 
 
-def to_abs(base_url: str, href: str) -> str:
-    return urljoin(base_url, href)
+def ensure_dir(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+
+
+def write_csv(path: Path, rows: List[Dict], field_order: Optional[List[str]] = None) -> None:
+    ensure_dir(path.parent)
+
+    if not rows:
+        cols = field_order or ["empty"]
+        with open(path, "w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.DictWriter(f, fieldnames=cols)
+            writer.writeheader()
+        return
+
+    keys: List[str] = []
+    seen = set()
+
+    if field_order:
+        for key in field_order:
+            if key not in seen:
+                seen.add(key)
+                keys.append(key)
+
+    for row in rows:
+        for key in row.keys():
+            if key not in seen:
+                seen.add(key)
+                keys.append(key)
+
+    with open(path, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=keys)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def append_csv(path: Path, rows: List[Dict]) -> None:
+    ensure_dir(path.parent)
+    if not rows:
+        return
+
+    if not path.exists():
+        write_csv(path, rows)
+        return
+
+    with open(path, "r", newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames or []
+
+    seen = set(fieldnames)
+    extra = []
+    for row in rows:
+        for key in row.keys():
+            if key not in seen:
+                seen.add(key)
+                extra.append(key)
+
+    if extra:
+        # Re-write file when new columns appear.
+        existing_rows = load_csv(path)
+        write_csv(path, existing_rows + rows, field_order=fieldnames + extra)
+        return
+
+    with open(path, "a", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writerows(rows)
+
+
+def load_csv(path: Path) -> List[Dict]:
+    if not path.exists():
+        return []
+    with open(path, "r", newline="", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
 
 
 def parse_url_meta(url: str) -> Dict[str, str]:
@@ -124,92 +213,15 @@ def parse_url_meta(url: str) -> Dict[str, str]:
     return out
 
 
-def ensure_dir(path: Path) -> None:
-    path.mkdir(parents=True, exist_ok=True)
+def to_abs(base_url: str, href: str) -> str:
+    return urljoin(base_url, href)
 
 
-def write_csv(path: Path, rows: List[Dict], field_order: List[str] = None) -> None:
-    ensure_dir(path.parent)
-    if not rows:
-        if field_order is None:
-            field_order = ["empty"]
-        with open(path, "w", newline="", encoding="utf-8-sig") as f:
-            writer = csv.DictWriter(f, fieldnames=field_order)
-            writer.writeheader()
-        return
-
-    keys = []
-    seen = set()
-    if field_order:
-        for k in field_order:
-            if k not in seen:
-                keys.append(k)
-                seen.add(k)
-
-    for row in rows:
-        for k in row.keys():
-            if k not in seen:
-                keys.append(k)
-                seen.add(k)
-
-    with open(path, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=keys)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def append_csv(path: Path, rows: List[Dict]) -> None:
-    """Append rows to existing CSV file (without rewriting header)."""
-    ensure_dir(path.parent)
-    if not rows:
-        return
-
-    if not path.exists():
-        write_csv(path, rows)
-        return
-
-    # Determine field order from existing file
-    with open(path, "r", newline="", encoding="utf-8-sig") as f:
-        reader = csv.DictReader(f)
-        fieldnames = reader.fieldnames or []
-
-    # Add any new fields from rows
-    seen = set(fieldnames) if fieldnames else set()
-    new_fields = []
-    for row in rows:
-        for k in row.keys():
-            if k not in seen:
-                new_fields.append(k)
-                seen.add(k)
-
-    fieldnames = list(fieldnames) + new_fields
-
-    with open(path, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writerows(rows)
-
-
-def load_csv(path: Path) -> List[Dict]:
-    """Load existing CSV file."""
-    if not path.exists():
-        return []
-    
-    with open(path, "r", newline="", encoding="utf-8-sig") as f:
-        reader = csv.DictReader(f)
-        return list(reader)
-
-
-def save_html(page, path: Path) -> None:
-    ensure_dir(path.parent)
-    path.write_text(page.content(), encoding="utf-8")
-
-
-def wait_settle(page, ms: int = 1200) -> None:
+def wait_settle(page: Page, ms: int = 1200) -> None:
     page.wait_for_timeout(ms)
 
 
-def goto_with_retry(page, url: str, attempts: int = NAVIGATION_ATTEMPTS) -> None:
-    """Navigate with retries for transient valg.dk network errors."""
+def goto_with_retry(page: Page, url: str, attempts: int = NAVIGATION_ATTEMPTS) -> None:
     last_exc = None
     for attempt in range(1, attempts + 1):
         try:
@@ -220,600 +232,610 @@ def goto_with_retry(page, url: str, attempts: int = NAVIGATION_ATTEMPTS) -> None
             if attempt >= attempts:
                 break
             page.wait_for_timeout(NAVIGATION_RETRY_SLEEP_MS * attempt)
-
     if last_exc is not None:
         raise last_exc
 
 
-def click_expandable_buttons(page) -> int:
-    """
-    Expand storkreds / accordion / party blocks as safely as possible.
-    """
-    clicks = 0
+def save_html(page: Page, path: Path) -> None:
+    ensure_dir(path.parent)
+    path.write_text(page.content(), encoding="utf-8")
 
-    # First: explicit aria-expanded buttons
+
+def find_sidenav_component(soup: BeautifulSoup, heading_text: str):
+    target = heading_text.lower()
+    for component in soup.find_all("valg-sidenavigation"):
+        heading = component.find(["h1", "h2", "h3", "h4"])
+        if heading and target in clean_text(heading.get_text(" ", strip=True)).lower():
+            return component
+    return None
+
+
+def parse_overview_html(html: str, base_url: str) -> List[Dict]:
+    soup = BeautifulSoup(html, "lxml")
+    component = find_sidenav_component(soup, "Gå til opstillingskreds")
+    if component is None:
+        return []
+
+    nav = component.find("nav")
+    if nav is None:
+        return []
+
+    root_ul = nav.find("ul")
+    if root_ul is None:
+        return []
+
+    rows: List[Dict] = []
+    seen = set()
+
+    for li in root_ul.find_all("li", recursive=False):
+        storkreds_button = li.find("button")
+        storkreds = clean_text(storkreds_button.get_text(" ", strip=True)) if storkreds_button else ""
+
+        nested_ul = li.find("ul")
+        if nested_ul is None:
+            continue
+
+        for child in nested_ul.find_all("li", recursive=False):
+            a = child.find("a", href=True)
+            if a is None:
+                continue
+
+            href = a["href"]
+            if "/nomination-district/" not in href:
+                continue
+
+            url = to_abs(base_url, href)
+            if url in seen:
+                continue
+            seen.add(url)
+
+            row = {
+                "storkreds": storkreds,
+                "nomination_label": clean_text(a.get_text(" ", strip=True)),
+                "nomination_url": url,
+                **parse_url_meta(url),
+            }
+            rows.append(row)
+
+    rows.sort(key=lambda r: (r["storkreds"], r["nomination_label"]))
+    return rows
+
+
+def parse_nomination_html(html: str, nomination_url: str, nomination_label: str, storkreds: str) -> List[Dict]:
+    soup = BeautifulSoup(html, "lxml")
+    component = find_sidenav_component(soup, "Gå til afstemningsområde")
+    if component is None:
+        return []
+
+    nav = component.find("nav")
+    if nav is None:
+        return []
+
+    root_ul = nav.find("ul")
+    if root_ul is None:
+        return []
+
+    rows: List[Dict] = []
+    seen = set()
+
+    for municipality_li in root_ul.find_all("li", recursive=False):
+        municipality_button = municipality_li.find("button")
+        kommune = clean_text(municipality_button.get_text(" ", strip=True)) if municipality_button else ""
+
+        nested_ul = municipality_li.find("ul")
+        if nested_ul is None:
+            continue
+
+        for child in nested_ul.find_all("li", recursive=False):
+            a = child.find("a", href=True)
+            if a is None:
+                continue
+
+            href = a["href"]
+            if "/polling-district/" not in href:
+                continue
+
+            url = to_abs(nomination_url, href)
+            if url in seen:
+                continue
+            seen.add(url)
+
+            row = {
+                "storkreds": storkreds,
+                "kommune": kommune,
+                "nomination_label": nomination_label,
+                "nomination_url": nomination_url,
+                "polling_label": clean_text(a.get_text(" ", strip=True)),
+                "polling_url": url,
+                **parse_url_meta(url),
+            }
+            rows.append(row)
+
+    rows.sort(key=lambda r: (r["kommune"], r["polling_label"]))
+    return rows
+
+
+def locator_exists(locator) -> bool:
     try:
-        buttons = page.locator("button")
-        n = buttons.count()
-        for i in range(n):
-            try:
-                btn = buttons.nth(i)
-                text = clean_text(btn.inner_text())
-                aria = (btn.get_attribute("aria-expanded") or "").lower()
-
-                # Storkreds / party accordion buttons tend to be plain buttons with labels.
-                if aria == "false":
-                    btn.click(timeout=1500)
-                    page.wait_for_timeout(120)
-                    clicks += 1
-                    continue
-
-                # Fall back to likely text-bearing expanders
-                if text and len(text) < 80:
-                    if any(
-                        hint in text.lower()
-                        for hint in [
-                            "bornholm",
-                            "københavn",
-                            "omegn",
-                            "sjælland",
-                            "fyn",
-                            "østjylland",
-                            "vestjylland",
-                            "nordjylland",
-                            "sydjylland",
-                            "nordsjælland",
-                        ]
-                    ):
-                        try:
-                            btn.click(timeout=600)
-                            page.wait_for_timeout(80)
-                            clicks += 1
-                        except Exception:
-                            pass
-            except Exception:
-                pass
+        return locator.count() > 0
     except Exception:
-        pass
-
-    # Some pages use summary/details
-    try:
-        summaries = page.locator("summary")
-        n = summaries.count()
-        for i in range(n):
-            try:
-                summaries.nth(i).click(timeout=700)
-                page.wait_for_timeout(80)
-                clicks += 1
-            except Exception:
-                pass
-    except Exception:
-        pass
-
-    return clicks
+        return False
 
 
-def collect_nomination_links(page, base_url: str) -> List[Dict]:
+def click_export_and_download(page: Page) -> Download:
     """
-    Expand the election landing page and collect every nomination-district link.
+    Try the obvious export button first. If that only opens a menu, try common follow-up
+    entries such as CSV / Excel.
     """
-    wait_settle(page, 1500)
-
-    # Try to reveal the nomination district area
-    possible_texts = [
-        "Gå til opstillingskreds",
-        "Opstillingskreds",
-        "Vis alle",
+    export_button_candidates = [
+        page.get_by_role("button", name=re.compile(r"Eksporter data", re.I)),
+        page.locator("button").filter(has_text=re.compile(r"Eksporter data", re.I)),
+        page.locator("button").filter(has_text=re.compile(r"Export", re.I)),
     ]
-    for txt in possible_texts:
+
+    last_exc: Optional[Exception] = None
+
+    for locator in export_button_candidates:
+        if not locator_exists(locator):
+            continue
         try:
-            loc = page.get_by_text(txt, exact=False)
-            for i in range(loc.count()):
-                try:
-                    loc.nth(i).click(timeout=1200)
-                    page.wait_for_timeout(100)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+            with page.expect_download(timeout=DOWNLOAD_TIMEOUT_MS) as download_info:
+                locator.first.click(timeout=5000)
+            return download_info.value
+        except Exception as exc:
+            last_exc = exc
 
-    click_expandable_buttons(page)
-    wait_settle(page, 1000)
-
-    rows = []
-    seen = set()
-
-    anchors = page.locator("a")
-    for i in range(anchors.count()):
+    # Maybe the first click opens a menu, popover, or secondary action.
+    for locator in export_button_candidates:
+        if not locator_exists(locator):
+            continue
         try:
-            a = anchors.nth(i)
-            href = a.get_attribute("href") or ""
-            text = clean_text(a.inner_text())
-            if "/nomination-district/" in href:
-                url = to_abs(base_url, href)
-                if url not in seen:
-                    seen.add(url)
-                    rows.append(
-                        {
-                            "nomination_label": text,
-                            "nomination_url": url,
-                        }
-                    )
+            locator.first.click(timeout=5000)
+            page.wait_for_timeout(400)
         except Exception:
-            pass
+            continue
 
-    rows.sort(key=lambda r: r["nomination_label"])
-    return rows
-
-
-def collect_polling_links(page, nomination_url: str, nomination_label: str) -> List[Dict]:
-    """
-    From a nomination-district page, collect every polling-district link.
-    """
-    wait_settle(page, 1000)
-
-    rows = []
-    seen = set()
-
-    anchors = page.locator("a")
-    for i in range(anchors.count()):
-        try:
-            a = anchors.nth(i)
-            href = a.get_attribute("href") or ""
-            text = clean_text(a.inner_text())
-            if "/polling-district/" in href:
-                url = to_abs(nomination_url, href)
-                if url not in seen:
-                    seen.add(url)
-                    rows.append(
-                        {
-                            "nomination_label": nomination_label,
-                            "nomination_url": nomination_url,
-                            "polling_label": text,
-                            "polling_url": url,
-                        }
-                    )
-        except Exception:
-            pass
-
-    rows.sort(key=lambda r: r["polling_label"])
-    return rows
-
-
-def expand_all_party_blocks(page) -> None:
-    """
-    On a polling-district page, expand every party result block before scraping candidates.
-    """
-    wait_settle(page, 1200)
-
-    # First click any collapsed buttons with aria-expanded=false
-    try:
-        buttons = page.locator("button")
-        n = buttons.count()
-        for i in range(n):
+        secondary_candidates = [
+            page.get_by_role("menuitem", name=re.compile(r"csv", re.I)),
+            page.get_by_role("menuitem", name=re.compile(r"excel|xlsx", re.I)),
+            page.get_by_role("button", name=re.compile(r"csv", re.I)),
+            page.get_by_role("button", name=re.compile(r"excel|xlsx", re.I)),
+            page.get_by_text(re.compile(r"csv", re.I)),
+            page.get_by_text(re.compile(r"excel|xlsx", re.I)),
+        ]
+        for secondary in secondary_candidates:
+            if not locator_exists(secondary):
+                continue
             try:
-                btn = buttons.nth(i)
-                aria = (btn.get_attribute("aria-expanded") or "").lower()
-                text = clean_text(btn.inner_text())
-                if aria == "false":
-                    btn.click(timeout=1200)
-                    page.wait_for_timeout(100)
-                elif text and len(text) < 120:
-                    # Many party headers are buttons as well
-                    if re.match(r"^[A-ZÆØÅa-zæøå].+", text):
-                        try:
-                            btn.click(timeout=400)
-                            page.wait_for_timeout(60)
-                        except Exception:
-                            pass
-            except Exception:
-                pass
+                with page.expect_download(timeout=DOWNLOAD_TIMEOUT_MS) as download_info:
+                    secondary.first.click(timeout=5000)
+                return download_info.value
+            except Exception as exc:
+                last_exc = exc
+
+    if last_exc is not None:
+        raise RuntimeError(f"Could not trigger export download: {type(last_exc).__name__}: {last_exc}")
+    raise RuntimeError("Could not find a usable export button on the polling page.")
+
+
+def save_download(download: Download, dest_dir: Path, polling_row: Dict, ordinal: int) -> Path:
+    ensure_dir(dest_dir)
+
+    suggested = clean_text(download.suggested_filename)
+    suffix = Path(suggested).suffix if suggested else ""
+    if not suffix:
+        suffix = ".bin"
+
+    filename = (
+        f"{ordinal:04d}_"
+        f"{safe_slug(polling_row.get('storkreds'))}__"
+        f"{safe_slug(polling_row.get('nomination_label'))}__"
+        f"{safe_slug(polling_row.get('kommune'))}__"
+        f"{safe_slug(polling_row.get('polling_label'))}{suffix}"
+    )
+    dest = dest_dir / filename
+    download.save_as(str(dest))
+    return dest
+
+
+def normalise_columns(df: pd.DataFrame) -> pd.DataFrame:
+    cols = []
+    seen = set()
+    for i, col in enumerate(df.columns, start=1):
+        name = clean_text(col)
+        if not name or name.lower().startswith("unnamed:"):
+            name = f"column_{i}"
+        base = name
+        n = 2
+        while name in seen:
+            name = f"{base}_{n}"
+            n += 1
+        seen.add(name)
+        cols.append(name)
+    out = df.copy()
+    out.columns = cols
+    out = out.dropna(axis=1, how="all").dropna(axis=0, how="all")
+    out = out.reset_index(drop=True)
+    return out
+
+
+def sniff_delimiter(sample: str) -> str:
+    try:
+        dialect = csv.Sniffer().sniff(sample, delimiters=",;\t|")
+        return dialect.delimiter
+    except Exception:
+        # Danish exports often use semicolon.
+        return ";" if sample.count(";") >= sample.count(",") else ","
+
+
+def read_csv_flex(path: Path) -> pd.DataFrame:
+    raw = path.read_bytes()
+    encodings = ["utf-8-sig", "utf-8", "cp1252", "latin-1"]
+    text = None
+    for enc in encodings:
+        try:
+            text = raw.decode(enc)
+            break
+        except UnicodeDecodeError:
+            continue
+    if text is None:
+        text = raw.decode("latin-1", errors="replace")
+
+    sample = text[:10000]
+    sep = sniff_delimiter(sample)
+
+    return pd.read_csv(
+        io.StringIO(text),
+        sep=sep,
+        engine="python",
+        dtype=str,
+    )
+
+
+def parse_export_file(path: Path) -> List[Tuple[str, pd.DataFrame]]:
+    suffix = path.suffix.lower()
+
+    if suffix in {".xlsx", ".xls", ".xlsm"}:
+        sheets = pd.read_excel(path, sheet_name=None, dtype=str)
+        return [(clean_text(name) or "Sheet1", normalise_columns(df)) for name, df in sheets.items()]
+
+    if suffix in {".csv", ".txt"}:
+        df = normalise_columns(read_csv_flex(path))
+        return [("data", df)]
+
+    # Best effort fallbacks
+    try:
+        sheets = pd.read_excel(path, sheet_name=None, dtype=str)
+        return [(clean_text(name) or "Sheet1", normalise_columns(df)) for name, df in sheets.items()]
     except Exception:
         pass
 
-    # Some pages use headings or summary elements
-    for selector in ["summary", "[role='button']"]:
-        try:
-            loc = page.locator(selector)
-            n = loc.count()
-            for i in range(n):
-                try:
-                    el = loc.nth(i)
-                    text = clean_text(el.inner_text())
-                    if text and len(text) < 120:
-                        el.click(timeout=400)
-                        page.wait_for_timeout(50)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+    try:
+        df = normalise_columns(read_csv_flex(path))
+        return [("data", df)]
+    except Exception:
+        pass
 
-    wait_settle(page, 800)
+    raise RuntimeError(f"Unsupported or unreadable export format: {path.name}")
 
 
-def parse_polling_page(html: str, polling_url: str, nomination_label: str, polling_label: str):
-    """
-    Generic DOM-order parser.
+def table_to_rows(df: pd.DataFrame, metadata: Dict, source_table: str) -> List[Dict]:
+    rows: List[Dict] = []
+    if df.empty:
+        return rows
 
-    Strategy:
-    - Walk the DOM in document order
-    - Find likely party headers
-    - Within each party container or following sibling block, extract candidate rows
-    - Preserve candidate ordering by DOM order
-    - Also fall back to tables when present
+    df = df.fillna("")
 
-    Because valg.dk is JS-rendered and may change structure, this parser is intentionally
-    heuristic but ordered.
-    """
-    soup = BeautifulSoup(html, "html.parser")
-    meta = parse_url_meta(polling_url)
+    for i, record in enumerate(df.to_dict(orient="records"), start=1):
+        row = dict(metadata)
+        row["source_table"] = source_table
+        row["source_row_number"] = i
+        for key, value in record.items():
+            row[key] = clean_text(value)
+        rows.append(row)
 
-    party_rows = []
-    candidate_rows = []
+    return rows
 
-    def cell_text(cells, index):
-        if index >= len(cells):
-            return ""
-        return clean_text(cells[index].get_text(" ", strip=True))
 
-    def split_party_name(text: str) -> str:
-        text = clean_text(text)
-        text = re.sub(r"^table\.expand_button\s*", "", text)
-        text = re.sub(r"^table\.expand_all_button\s*", "", text)
-        text = re.sub(r"^[A-ZÆØÅ]\.[\s\u00a0]*", "", text)
-        text = re.sub(r"\s+Opstillingsform:.*$", "", text).strip()
-        return text
+def save_parsed_tables(
+    parsed_tables: List[Tuple[str, pd.DataFrame]],
+    parsed_dir: Path,
+    polling_row: Dict,
+    ordinal: int,
+) -> List[Path]:
+    ensure_dir(parsed_dir)
+    saved_paths = []
 
-    def extract_opstillingsform(text: str) -> str:
-        match = re.search(r"Opstillingsform:\s*(.+)$", text)
-        return clean_text(match.group(1)) if match else ""
-
-    def parse_votes(text: str):
-        text = clean_text(text)
-        match = re.search(r"\d[\d\.]*", text)
-        if not match:
-            return None
-        return int(match.group(0).replace(".", ""))
-
-    parties_table = None
-    for table in soup.find_all("table"):
-        desc = table.get("aria-describedby") or ""
-        if "valg-table-0-title" in desc:
-            parties_table = table
-            break
-
-    if parties_table is not None:
-        current_party = ""
-        current_party_order = -1
-        candidate_order = 0
-
-        trs = parties_table.find_all("tr")
-        for tr in trs[1:]:
-            classes = tr.get("class") or []
-            cells = tr.find_all(["td", "th"], recursive=False)
-            if not cells:
-                continue
-
-            if "parent-row" in classes:
-                current_party_order += 1
-                candidate_order = 0
-
-                party_label_text = cell_text(cells, 1)
-                party_votes_text = cell_text(cells, 2)
-                party_percentage_text = cell_text(cells, 3)
-
-                current_party = split_party_name(party_label_text)
-                party_rows.append(
-                    {
-                        "row_type": "party",
-                        "party_name": current_party,
-                        "party_order": current_party_order,
-                        "party_votes": parse_votes(party_votes_text),
-                        "party_percentage": party_percentage_text,
-                        "opstillingsform": extract_opstillingsform(party_label_text),
-                        "nomination_label": nomination_label,
-                        "polling_label": polling_label,
-                        "polling_url": polling_url,
-                        **meta,
-                    }
-                )
-                continue
-
-            if "child-row" in classes and current_party:
-                row_label = cell_text(cells, 1)
-                votes_text = cell_text(cells, 2)
-                percentage_text = cell_text(cells, 3)
-
-                if not row_label:
-                    continue
-
-                if row_label == "Partistemmer":
-                    party_rows.append(
-                        {
-                            "row_type": "party_list_votes",
-                            "party_name": current_party,
-                            "party_order": current_party_order,
-                            "label": row_label,
-                            "votes": parse_votes(votes_text),
-                            "percentage": percentage_text,
-                            "nomination_label": nomination_label,
-                            "polling_label": polling_label,
-                            "polling_url": polling_url,
-                            **meta,
-                        }
-                    )
-                    continue
-
-                candidate_order += 1
-                candidate_rows.append(
-                    {
-                        "row_type": "candidate",
-                        "party_name": current_party,
-                        "party_order": current_party_order,
-                        "candidate_order_within_party": candidate_order,
-                        "candidate_name": row_label,
-                        "votes": parse_votes(votes_text),
-                        "percentage": percentage_text,
-                        "nomination_label": nomination_label,
-                        "polling_label": polling_label,
-                        "polling_url": polling_url,
-                        **meta,
-                    }
-                )
-
-        if party_rows or candidate_rows:
-            return party_rows, candidate_rows
-
-    # Fallback: best-effort DOM scan if the party table structure changes.
-    elements = soup.find_all(["button", "h1", "h2", "h3", "h4", "h5", "h6", "div", "li", "p", "tr"])
-    current_party = ""
-    current_party_order = -1
-    candidate_order = 0
-    seen_party_headers = set()
-
-    def looks_like_party_header(text: str) -> bool:
-        if not text:
-            return False
-        t = clean_text(text)
-        if len(t) > 120:
-            return False
-        if any(x in t.lower() for x in ["stemme", "valgsted", "afstemningsområde", "opstillingskreds"]):
-            return False
-        return any(
-            k in t.lower()
-            for k in [
-                "socialdemokrat",
-                "radikale",
-                "konservative",
-                "socialistisk folkeparti",
-                "liberal alliance",
-                "moderaterne",
-                "dansk folkeparti",
-                "venstre",
-                "danmarksdemokraterne",
-                "enhedslisten",
-                "alternativet",
-                "borgernes parti",
-            ]
+    for sheet_name, df in parsed_tables:
+        filename = (
+            f"{ordinal:04d}_"
+            f"{safe_slug(polling_row.get('storkreds'))}__"
+            f"{safe_slug(polling_row.get('nomination_label'))}__"
+            f"{safe_slug(polling_row.get('kommune'))}__"
+            f"{safe_slug(polling_row.get('polling_label'))}__"
+            f"{safe_slug(sheet_name)}.csv"
         )
+        path = parsed_dir / filename
+        df.to_csv(path, index=False, encoding="utf-8-sig")
+        saved_paths.append(path)
 
-    def looks_like_candidate_line(text: str) -> bool:
-        t = clean_text(text)
-        if not t or len(t) > 250:
-            return False
-        words = t.split()
-        alpha_words = [w for w in words if re.search(r"[A-Za-zÆØÅæøå]", w)]
-        return len(alpha_words) >= 2 and bool(re.search(r"\d", t))
-
-    def parse_candidate_text(text: str) -> Dict:
-        t = clean_text(text)
-        nums = re.findall(r"\d[\d\.,]*", t)
-        m = re.match(r"^(.*?)(?=\s+\d[\d\.,]*|\s*$)", t)
-        candidate_name = clean_text(m.group(1)) if m else t
-
-        row = {
-            "candidate_name": candidate_name,
-            "candidate_raw_text": t,
-            "numeric_tokens": " | ".join(nums),
-        }
-        if len(nums) >= 1:
-            row["candidate_votes_1"] = nums[0]
-        if len(nums) >= 2:
-            row["candidate_votes_2"] = nums[1]
-        if len(nums) >= 3:
-            row["candidate_votes_3"] = nums[2]
-        return row
-
-    for el in elements:
-        text = clean_text(el.get_text(" ", strip=True))
-        if not text:
-            continue
-
-        if looks_like_party_header(text):
-            current_party = text
-            if current_party not in seen_party_headers:
-                current_party_order += 1
-                seen_party_headers.add(current_party)
-                party_rows.append(
-                    {
-                        "row_type": "party",
-                        "party_name": current_party,
-                        "party_order": current_party_order,
-                        "nomination_label": nomination_label,
-                        "polling_label": polling_label,
-                        "polling_url": polling_url,
-                        "party_header_text": text,
-                        **meta,
-                    }
-                )
-            continue
-
-        if current_party and looks_like_candidate_line(text):
-            candidate_order += 1
-            parsed = parse_candidate_text(text)
-            candidate_rows.append(
-                {
-                    "row_type": "candidate",
-                    "party_name": current_party,
-                    "party_order": current_party_order,
-                    "candidate_order_within_party": candidate_order,
-                    "nomination_label": nomination_label,
-                    "polling_label": polling_label,
-                    "polling_url": polling_url,
-                    **meta,
-                    **parsed,
-                }
-            )
-
-    return party_rows, candidate_rows
+    return saved_paths
 
 
-def scrape(start_url: str, outdir: Path) -> None:
+def scrape_one_election(
+    start_url: str,
+    outdir: Path,
+    headless: bool = HEADLESS,
+    election_year: Optional[int] = None,
+) -> Dict[str, object]:
     if sync_playwright is None:
         raise RuntimeError(
             "Missing dependency: playwright. Install with `pip install playwright` and "
             "run `python -m playwright install chromium`."
         ) from _PLAYWRIGHT_IMPORT_ERROR
 
+    election_meta = parse_url_meta(start_url)
+    election_id = election_meta.get("election_id", "")
+
     ensure_dir(outdir)
-    raw_dir = outdir / "raw_html"
-    ensure_dir(raw_dir)
+    raw_html_dir = outdir / "raw_html"
+    exports_dir = outdir / "exports"
+    parsed_dir = outdir / "parsed_tables"
+    ensure_dir(raw_html_dir)
+    ensure_dir(exports_dir)
+    ensure_dir(parsed_dir)
 
-    nomination_rows = []
-    polling_rows = []
-    all_party_rows = []
-    all_candidate_rows = []
+    nomination_path = outdir / NOMINATION_LINKS_CSV
+    polling_path = outdir / POLLING_LINKS_CSV
+    inventory_path = outdir / EXPORT_INVENTORY_CSV
+    parsed_rows_path = outdir / PARSED_EXPORT_ROWS_CSV
 
-    # Check if we're resuming from a checkpoint
-    polling_links_path = outdir / POLLING_LINKS_CSV
-    party_results_path = outdir / PARTY_RESULTS_CSV
-    candidate_results_path = outdir / CANDIDATE_RESULTS_CSV
-    
-    resume_from_polling_index = 0
-    if polling_links_path.exists():
-        print("Resuming from checkpoint...")
-        polling_rows = load_csv(polling_links_path)
-        all_party_rows = load_csv(party_results_path)
-        all_candidate_rows = load_csv(candidate_results_path)
-        
-        print(f"Loaded {len(polling_rows)} polling district links")
-        print(f"Loaded {len(all_party_rows)} party result rows")
-        print(f"Loaded {len(all_candidate_rows)} candidate result rows")
-        
-        # HARDCODED RESUME POINT FOR THIS RUN: Start from index 583
-        resume_from_polling_index = 583
-        print(f"\n*** HARDCODED RESUME POINT: Starting from index 583 (polling_0584) ***\n")
-    else:
-        # First run: collect nomination and polling links
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=HEADLESS)
-            context = browser.new_context()
+    nomination_rows: List[Dict] = []
+    polling_rows: List[Dict] = []
 
-            # Election page
-            page = context.new_page()
-            goto_with_retry(page, start_url)
-            wait_settle(page, 1800)
-            save_html(page, raw_dir / "election_page.html")
-
-            nomination_rows = collect_nomination_links(page, start_url)
-            if not nomination_rows:
-                raise RuntimeError("No nomination-district links found on the election page.")
-
-            write_csv(outdir / NOMINATION_LINKS_CSV, nomination_rows, ["nomination_label", "nomination_url"])
-
-            # Nomination pages
-            for i, nd in enumerate(nomination_rows, start=1):
-                nd_page = context.new_page()
-                try:
-                    goto_with_retry(nd_page, nd["nomination_url"])
-                    wait_settle(nd_page, 1200)
-                    save_html(nd_page, raw_dir / f"nomination_{i:03d}_{safe_slug(nd['nomination_label'])}.html")
-
-                    nd_polling = collect_polling_links(
-                        nd_page,
-                        nd["nomination_url"],
-                        nd["nomination_label"],
-                    )
-                    polling_rows.extend(nd_polling)
-                finally:
-                    nd_page.close()
-
-            write_csv(
-                outdir / POLLING_LINKS_CSV,
-                polling_rows,
-                ["nomination_label", "nomination_url", "polling_label", "polling_url"],
-            )
-
-            browser.close()
-
-    # Polling pages (always run, either from start or from checkpoint)
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=HEADLESS)
-        context = browser.new_context()
+        browser = p.chromium.launch(headless=headless)
+        context = browser.new_context(
+            accept_downloads=True,
+            viewport={"width": 1440, "height": 2200},
+        )
 
-        for i, pr in enumerate(polling_rows, start=1):
-            # Skip already-processed polling districts
-            if i <= resume_from_polling_index:
-                continue
+        # Step 1: overview -> nomination districts
+        page = context.new_page()
+        goto_with_retry(page, start_url)
+        wait_settle(page, 1200)
+        save_html(page, raw_html_dir / "overview.html")
+        nomination_rows = parse_overview_html(page.content(), start_url)
+        page.close()
 
-            pd_page = context.new_page()
+        if not nomination_rows:
+            raise RuntimeError("No nomination-district links found on the overview page.")
+
+        write_csv(
+            nomination_path,
+            nomination_rows,
+            [
+                "election_year",
+                "start_url",
+                "storkreds",
+                "nomination_label",
+                "nomination_url",
+                "election_id",
+                "nomination_district_id",
+            ],
+        )
+
+        # Step 2: nomination districts -> kommune + polling districts
+        for i, nomination in enumerate(nomination_rows, start=1):
+            nd_page = context.new_page()
             try:
-                goto_with_retry(pd_page, pr["polling_url"])
-                wait_settle(pd_page, 1500)
+                goto_with_retry(nd_page, nomination["nomination_url"])
+                wait_settle(nd_page, 1000)
+                save_html(
+                    nd_page,
+                    raw_html_dir / f"nomination_{i:03d}_{safe_slug(nomination['nomination_label'])}.html",
+                )
+                rows = parse_nomination_html(
+                    html=nd_page.content(),
+                    nomination_url=nomination["nomination_url"],
+                    nomination_label=nomination["nomination_label"],
+                    storkreds=nomination["storkreds"],
+                )
+                for row in rows:
+                    row["election_year"] = election_year if election_year is not None else ""
+                    row["start_url"] = start_url
+                polling_rows.extend(rows)
+            finally:
+                nd_page.close()
 
-                # Important: expand party blocks before scraping candidates
-                expand_all_party_blocks(pd_page)
-                wait_settle(pd_page, 800)
+        if not polling_rows:
+            raise RuntimeError("No polling-district links found on the nomination pages.")
 
-                save_html(pd_page, raw_dir / f"polling_{i:04d}_{safe_slug(pr['polling_label'])}.html")
-                html = pd_page.content()
+        write_csv(
+            polling_path,
+            polling_rows,
+            [
+                "election_year",
+                "start_url",
+                "storkreds",
+                "kommune",
+                "nomination_label",
+                "nomination_url",
+                "polling_label",
+                "polling_url",
+                "election_id",
+                "nomination_district_id",
+                "polling_district_id",
+            ],
+        )
 
-                party_rows, candidate_rows = parse_polling_page(
-                    html=html,
-                    polling_url=pr["polling_url"],
-                    nomination_label=pr["nomination_label"],
-                    polling_label=pr["polling_label"],
+        # Step 3: polling district page -> export download
+        inventory_rows: List[Dict] = []
+        parsed_export_rows: List[Dict] = []
+
+        for i, polling in enumerate(polling_rows, start=1):
+            polling_page = context.new_page()
+            inventory_row = {
+                "ordinal": i,
+                **polling,
+                "downloaded": 0,
+                "parsed": 0,
+                "download_path": "",
+                "parse_tables": 0,
+                "parse_rows": 0,
+                "error": "",
+            }
+
+            try:
+                goto_with_retry(polling_page, polling["polling_url"])
+                wait_settle(polling_page, 1200)
+                save_html(
+                    polling_page,
+                    raw_html_dir / f"polling_{i:04d}_{safe_slug(polling['polling_label'])}.html",
                 )
 
-                all_party_rows.extend(party_rows)
-                all_candidate_rows.extend(candidate_rows)
-                
-                # Periodically append to CSVs to preserve progress
-                if len(party_rows) > 0:
-                    append_csv(party_results_path, party_rows)
-                if len(candidate_rows) > 0:
-                    append_csv(candidate_results_path, candidate_rows)
+                download = click_export_and_download(polling_page)
+                download_path = save_download(download, exports_dir, polling, i)
+                inventory_row["downloaded"] = 1
+                inventory_row["download_path"] = str(download_path)
 
-            except (PlaywrightTimeoutError, PlaywrightError) as exc:
-                error_row = {
-                    "polling_url": pr["polling_url"],
-                    "polling_label": pr["polling_label"],
-                    "nomination_label": pr["nomination_label"],
-                    "error": f"navigation_error: {type(exc).__name__}",
+                parsed_tables = parse_export_file(download_path)
+                inventory_row["parsed"] = 1
+                inventory_row["parse_tables"] = len(parsed_tables)
+
+                save_parsed_tables(parsed_tables, parsed_dir, polling, i)
+
+                metadata = {
+                    "ordinal": i,
+                    **polling,
+                    "download_filename": download_path.name,
                 }
-                all_party_rows.append(error_row)
-                append_csv(party_results_path, [error_row])
+
+                row_count = 0
+                for source_table, df in parsed_tables:
+                    rows = table_to_rows(df, metadata, source_table)
+                    row_count += len(rows)
+                    parsed_export_rows.extend(rows)
+
+                inventory_row["parse_rows"] = row_count
+
+            except Exception as exc:
+                inventory_row["error"] = f"{type(exc).__name__}: {exc}"
             finally:
-                pd_page.close()
+                inventory_rows.append(inventory_row)
+                polling_page.close()
 
         browser.close()
 
-    # Final write (in case we're resuming and need to write the final batch)
-    if resume_from_polling_index == 0:
-        write_csv(party_results_path, all_party_rows)
-        write_csv(candidate_results_path, all_candidate_rows)
+    write_csv(inventory_path, inventory_rows)
+    write_csv(parsed_rows_path, parsed_export_rows)
 
-    print("Done.")
-    print("Nomination districts:", len(nomination_rows) if nomination_rows else len(load_csv(outdir / NOMINATION_LINKS_CSV)))
+    downloaded_ok = sum(int(r["downloaded"]) for r in inventory_rows)
+    parsed_ok = sum(int(r["parsed"]) for r in inventory_rows)
+
+    print("Done election run.")
+    print("Election year:", election_year if election_year is not None else "")
+    print("Election id:", election_id)
+    print("Nomination districts:", len(nomination_rows))
     print("Polling districts:", len(polling_rows))
-    print("Party rows:", len(all_party_rows))
-    print("Candidate rows:", len(all_candidate_rows))
+    print("Downloads attempted:", len(inventory_rows))
+    print("Downloaded OK:", downloaded_ok)
+    print("Parsed OK:", parsed_ok)
     print("Output folder:", outdir.resolve())
 
+    return {
+        "election_year": election_year if election_year is not None else "",
+        "start_url": start_url,
+        "election_id": election_id,
+        "nomination_districts": len(nomination_rows),
+        "polling_districts": len(polling_rows),
+        "downloads_attempted": len(inventory_rows),
+        "downloaded_ok": downloaded_ok,
+        "parsed_ok": parsed_ok,
+        "outdir": str(outdir.resolve()),
+    }
 
-def main():
-    start_url = sys.argv[1] if len(sys.argv) > 1 else START_URL
-    scrape(start_url, OUTDIR)
+
+def scrape_all(start_urls: List[str], outdir: Path, headless: bool = HEADLESS) -> None:
+    ensure_dir(outdir)
+    summary_rows: List[Dict] = []
+
+    for index, start_url in enumerate(start_urls, start=1):
+        meta = parse_url_meta(start_url)
+        election_id = meta.get("election_id", "")
+        election_year = URL_TO_YEAR.get(start_url)
+
+        if election_year is not None:
+            election_dir_name = f"recorded_{election_year}"
+        elif election_id:
+            election_dir_name = f"recorded_{election_id}"
+        else:
+            election_dir_name = f"recorded_{index:02d}"
+
+        election_outdir = outdir / election_dir_name
+
+        print("=" * 80)
+        print(f"[{index}/{len(start_urls)}] Running election scrape")
+        print("Year:", election_year if election_year is not None else "")
+        print("URL:", start_url)
+        print("Output:", election_outdir.resolve())
+
+        try:
+            summary = scrape_one_election(
+                start_url=start_url,
+                outdir=election_outdir,
+                headless=headless,
+                election_year=election_year,
+            )
+            summary["status"] = "ok"
+            summary["error"] = ""
+        except Exception as exc:
+            summary = {
+                "election_year": election_year if election_year is not None else "",
+                "start_url": start_url,
+                "election_id": election_id,
+                "nomination_districts": 0,
+                "polling_districts": 0,
+                "downloads_attempted": 0,
+                "downloaded_ok": 0,
+                "parsed_ok": 0,
+                "outdir": str(election_outdir.resolve()),
+                "status": "failed",
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+
+        summary_rows.append(summary)
+        write_csv(outdir / RUN_SUMMARY_CSV, summary_rows)
+
+    print("=" * 80)
+    print("All election runs completed.")
+    print("Summary CSV:", (outdir / RUN_SUMMARY_CSV).resolve())
+    print("Total elections attempted:", len(summary_rows))
+    print("Succeeded:", sum(1 for row in summary_rows if row.get("status") == "ok"))
+    print("Failed:", sum(1 for row in summary_rows if row.get("status") == "failed"))
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="valg.dk export scraper (2005-2026)")
+    parser.add_argument(
+        "--start-url",
+        action="append",
+        default=None,
+        help="Election overview URL (repeat flag for multiple URLs). Defaults to all known 2005-2026 URLs.",
+    )
+    parser.add_argument("--outdir", default=str(OUTDIR), help="Output directory")
+    parser.add_argument("--headed", action="store_true", help="Run browser non-headless")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    start_urls = args.start_url or list(DEFAULT_ELECTION_URLS)
+    scrape_all(
+        start_urls=start_urls,
+        outdir=Path(args.outdir),
+        headless=not args.headed,
+    )
 
 
 if __name__ == "__main__":
