@@ -2,7 +2,7 @@
 #### Check out the interactive dashboards [here](https://kgspindler.github.io/kasperspindler/tiktok_election_dashboard.html)
 The Danish Folketing election has invigorated politicians to use all means to increase their voters. 
 Recently numerous news-channels have reported on politicans usage of Tiktok, especially how Liberal Alliance has used the platform to succesfully increase political reach of the younger generation.
-[(1) TV2](https://nyheder.tv2.dk/politik/2026-03-10-tiktok-er-valgets-store-slagmark-men-ikke-alle-partier-lykkes-lige-godt) [(2) DR](https://www.dr.dk/nyheder/politik/har-du-ikke-tiktok-saadan-har-politikerne-foert-valgkamp-derinde)
+[(1) TV2](https://nyheder.tv2.dk/politik/2026-03-10-tiktok-er-valgets-store-slagmark-men-ikke-alle-partier-lykkes-lige-godt) [(2) DR](https://www.dr.dk/nyheder/politik/har-du-ikke-tiktok-saadan-har-politikerne-foert-valgkamp-derinde) There are numerous identification problems - so no causal estimate can actually be derived.
 
 <br>
 A few questions arose:
@@ -50,6 +50,26 @@ Lastly, there is a clear correlation when doing a simple lineær regression betw
 
 The election announcement marks a clear turning point in Danish political parties' Tiktok acitivity, with uploads rising sharply immediately afterwards. At the same time the results show that results and visibility on Tiktok is highly uneven accross parties and candidates, with Danish Politics on Tiktok being driven by a few dominant political figures, rather than broad party wide activity. Liberal Alliance stands out as the strongest performer in overall reach, but only on account of the leading figure Alex Vanopslagh, whilst other parties such as Enhedslisten show relatively stronger engagement compared to their view totals.
 Overall the findings suggest that Tiktok is becoming an increasingly important, and prioritized tool in the Danish Politicians' campaign toolbox.
+
+### Deeper analysis
+I used the 2022 and 2026 electionresults, together with Altingets demographic profiles of the candidates to adjust for these factors.
+
+Strong positve association in a simple baseline model checking if Tiktok exists by storkreds results:
+<img width="2131" height="628" alt="model_1_baseline_party_storkreds_fe" src="https://github.com/user-attachments/assets/000e0bab-3ecc-41a9-a874-b16a3983f9e4" />
+
+Same association with municipal results:
+<img width="2131" height="635" alt="model_2_baseline_party_kommune_fe" src="https://github.com/user-attachments/assets/7a4fefd0-7c10-4124-983a-71cfd5760797" />
+
+Strongest subgroup results is for new candidates:
+<img width="2131" height="635" alt="model_8_new_candidates_party_storkreds_fe" src="https://github.com/user-attachments/assets/467ec8b4-b70e-4b96-8280-af29dab062c0" />
+
+Robustnesschecks for the  models:
+1. Education categories are non significant, age is nonsignificant and tiktok usage is still positively significant.
+2. When adding prior strength (2022 election results), the tiktok_exists coefficient falls to 0.0113, and is non significant.
+3. Intensity of usage has no effect on results when adjusting for demographics and prior results.
+
+The biggest problem with this analysis is identifying prior strength and popularity outside of Tiktok. There are possible multicollinearity problems in the design, as there are created loads of dummy variables on Storkreds/Kommune level. Tiktok-existing is also related to other video variables. If tiktok exists, there will be no tiktok usage in any timeframe. Prior strength (voteshare) overlaps with lots of fixed effects.
+
 
 ### Data
 Find the video or candidate datasets [here](https://github.com/KGSpindler/2026-Politician-Tiktok-Analysis/tree/main/Datasets)
